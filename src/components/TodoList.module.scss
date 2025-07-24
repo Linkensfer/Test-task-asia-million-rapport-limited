@@ -1,0 +1,13 @@
+.list {
+  border: 1.5px solid #00838F;
+  border-radius: 10px;
+  background-color: #F2F2F2;
+  padding: 10px 0;
+  margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .list {
+    margin: 10px 0;
+  }
+}
