@@ -5,7 +5,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import todoReducer from '../store/todoSlice'
 import { TodoItem } from './TodoItem'
 import { TodoList } from './TodoList' 
-import { FilterType, ITodo } from '../types/types'
+import { FilterType, ITodo, StatusEnum } from '../types/types'
 import userEvent from '@testing-library/user-event'
 
 beforeAll(() => {
@@ -21,7 +21,7 @@ describe('TodoItem', () => {
   const mockTodo: ITodo = {
     id: '1',
     content: 'Тестовая задача',
-    completed: false
+    status: StatusEnum.Pending
   }
 
   it('Проверка корректного отображения элемента todo', () => {
@@ -34,7 +34,7 @@ describe('TodoItem', () => {
     )
 
     expect(screen.getByText('Тестовая задача')).toBeInTheDocument()
-    expect(screen.getByRole('checkbox')).not.toBeChecked()
+    expect(screen.getByRole('listitem')).toHaveClass('pending')
   })
 
   it('Проверка смены статуса задачи при нажатии', async () => {
@@ -54,15 +54,16 @@ describe('TodoItem', () => {
       </Provider>
     )
 
-    await userEvent.click(screen.getByRole('checkbox'))
-    expect(store.getState().todos.todos[0].completed).toBe(true)
+    await userEvent.click(screen.getByRole('status_button'))
+    await userEvent.click(screen.getByRole('done'))
+    expect(store.getState().todos.todos[0].status === StatusEnum.Done).toBe(true)
   })
 })
 
 describe('Интеграция TodoItem с фильтрами', () => {
   const todos = [
-    { id: '1', content: 'Активная задача', completed: false },
-    { id: '2', content: 'Завершенная задача', completed: true }
+    { id: '1', content: 'Активная задача', status: StatusEnum.InProgress },
+    { id: '2', content: 'Завершенная задача', status: StatusEnum.Done }
   ]
 
   it('Задача не отображается при фильтре "active", если она завершена', () => {

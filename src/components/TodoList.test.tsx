@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import todoReducer from '../store/todoSlice'
 import { TodoList } from './TodoList'
-import { FilterType, ITodo } from '../types/types'
+import { FilterType, ITodo, StatusEnum } from '../types/types'
 import userEvent from '@testing-library/user-event'
 import { Footer } from './Footer'
 
@@ -19,8 +19,8 @@ beforeAll(() => {
 
 describe('TodoList', () => {
   const mockTodos: ITodo[] = [
-    { id: '1', content: 'Задача 1', completed: false },
-    { id: '2', content: 'Задача 2', completed: true }
+    { id: '1', content: 'Задача 1', status: StatusEnum.Pending },
+    { id: '2', content: 'Задача 2', status: StatusEnum.Done }
   ]
 
   const createTestStore = (todos: ITodo[] = mockTodos, filter: FilterType = 'all') => {
@@ -47,7 +47,7 @@ describe('TodoList', () => {
   })
 
   it('Проверка отображения только активных задач при фильтре "active"', () => {
-    const store = createTestStore(mockTodos, 'active')
+    const store = createTestStore(mockTodos, 'pending')
 
     render(
       <Provider store={store}>
@@ -98,8 +98,8 @@ describe('TodoList', () => {
     // Изначально должны отображаться все задачи
     expect(screen.getAllByRole('listitem')).toHaveLength(2)
   
-    // Переключение на активные
-    await userEvent.click(screen.getByText('Active'))
+    // Переключение на "в ожидании"
+    await userEvent.click(screen.getByText('Pending'))
     expect(screen.getAllByRole('listitem')).toHaveLength(1)
     expect(screen.getByText('Задача 1')).toBeInTheDocument()
   

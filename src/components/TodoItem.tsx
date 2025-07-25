@@ -1,31 +1,40 @@
 import { memo } from "react"
-import { ITodo } from "../types/types"
+import { ITodo, StatusEnum } from "../types/types"
 import { RemoveTodo } from "./RemoveTodo"
-import { useDispatch } from 'react-redux'
-import { updateTodo } from "../store/todoSlice"
-import { AppDispatch } from '../store'
 import styles from './TodoItem.module.scss'
+import { ActionButton } from "./ActionButton"
 
 interface TodoItemProps {
   unitElement: ITodo
 }
 
+function getStatusColorClass(status: StatusEnum) {
+  switch (status) {
+    case StatusEnum.Pending:
+      return styles.pending
+    case StatusEnum.InProgress:
+      return styles.progress
+    case StatusEnum.Done:
+        return styles.done
+    default:
+      return styles.pending
+  }
+}
+
 export const TodoItem = memo(
   function TodoItem({ unitElement }: TodoItemProps) {
-    const dispatch = useDispatch<AppDispatch>()
+    const statusColor = getStatusColorClass(unitElement.status)
+
     return (
-      <div className={styles.elem} role="listitem">
-        <div className={styles.content} onClick={() => dispatch(updateTodo(unitElement.id))}>
-          <input
-            type="checkbox"
-            checked={unitElement.completed}
-            onChange={() => {}}
-            className={styles.checkbox}
-          />
-          <span className={`${styles.text} ${unitElement.completed ? styles.completed : ''}`}>
+      <div className={`${styles.elem} ${statusColor}`} role="listitem">
+        <div className={styles.content}>
+          <span className={`${styles.text} ${unitElement.status === StatusEnum.Done ? styles.completed : ''}`}>
             {unitElement.content}
           </span>
         </div>
+
+        <ActionButton id={unitElement.id} activeStatus={unitElement.status} />
+
         <RemoveTodo id={unitElement.id} />
       </div>
     )

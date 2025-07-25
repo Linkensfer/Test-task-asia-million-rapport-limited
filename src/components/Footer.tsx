@@ -3,11 +3,12 @@ import { RootState } from "../store"
 import { deleteCompletedTodo, setFilter } from "../store/todoSlice"
 import { AppDispatch } from '../store'
 import styles from './Footer.module.scss'
+import { StatusEnum } from '../types/types'
 
 export function Footer() {
   const todos = useSelector((state: RootState) => state.todos.todos)
   const dispatch = useDispatch<AppDispatch>()
-  const countLeftTodo = todos.filter(todo => !todo.completed).length
+  const countLeftTodo = todos.filter(todo => todo.status !== StatusEnum.Done).length
   
   return (
     <div className={styles.wrapper}>
@@ -19,6 +20,12 @@ export function Footer() {
           onClick={() => dispatch(setFilter('all'))}
         >
           All
+        </button>
+        <button 
+          className={styles.filterButton} 
+          onClick={() => dispatch(setFilter('pending'))}
+        >
+          Pending
         </button>
         <button 
           className={styles.filterButton} 
@@ -35,7 +42,7 @@ export function Footer() {
         <button 
           className={styles.clearButton}
           onClick={() => dispatch(deleteCompletedTodo())}
-          disabled={!todos.some(todo => todo.completed)}
+          disabled={!todos.some(todo => todo.status === StatusEnum.Done)}
         >
           Clear Completed
         </button>

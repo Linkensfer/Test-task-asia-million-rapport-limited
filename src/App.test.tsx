@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import todoReducer from './store/todoSlice'
 import App from './App'
-import { FilterType } from './types/types'
+import { FilterType, StatusEnum } from './types/types'
 import userEvent from '@testing-library/user-event'
 
 beforeAll(() => {
@@ -42,7 +42,7 @@ describe('App', () => {
       reducer: { todos: todoReducer },
       preloadedState: {
         todos: {
-          todos: [{ id: '1', content: 'Тест', completed: false }],
+          todos: [{ id: '1', content: 'Тест', status: StatusEnum.Pending }],
           filter: 'all' as FilterType
         }
       }
@@ -75,8 +75,8 @@ describe('App', () => {
       preloadedState: {
         todos: {
           todos: [
-            { id: '1', content: 'Тест 1', completed: false },
-            { id: '2', content: 'Тест 2', completed: true }
+            { id: '1', content: 'Тест 1', status: StatusEnum.Pending },
+            { id: '2', content: 'Тест 2', status: StatusEnum.Done }
           ],
           filter: 'all' as FilterType
         }

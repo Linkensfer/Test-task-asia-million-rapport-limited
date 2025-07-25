@@ -5,7 +5,7 @@ import todoReducer, {
   deleteCompletedTodo,
   setFilter
 } from './todoSlice'
-import { ITodo } from "../types/types"
+import { ITodo, StatusEnum } from "../types/types"
 
 const localStorageMock = (function() {
   let store: Record<string, string> = {}
@@ -49,21 +49,21 @@ describe('todoSlice', () => {
     
     expect(actual.todos).toHaveLength(1)
     expect(actual.todos[0].content).toEqual(content)
-    expect(actual.todos[0].completed).toBe(false)
+    expect(actual.todos[0].status).toBe(StatusEnum.Pending)
     expect(localStorage.getItem('todosState')).not.toBeNull()
   })
 
   it('Проверка обработки updateTodo', () => {
-    const todo = { id: '1', content: 'Test', completed: false }
+    const todo = { id: '1', content: 'Test', status: StatusEnum.Pending }
     const state = { ...initialState, todos: [todo] }
     
-    const actual = todoReducer(state, updateTodo('1'))
-    expect(actual.todos[0].completed).toBe(true)
+    const actual = todoReducer(state, updateTodo({id: '1', status: StatusEnum.Done}))
+    expect(actual.todos[0].status).toBe(StatusEnum.Done)
     expect(localStorage.getItem('todosState')).not.toBeNull()
   })
 
   it('Проверка обработки deleteTodo', () => {
-    const todo = { id: '1', content: 'Test', completed: false }
+    const todo = { id: '1', content: 'Test', status: StatusEnum.Pending }
     const state = { ...initialState, todos: [todo] }
     
     const actual = todoReducer(state, deleteTodo('1'))
@@ -73,8 +73,8 @@ describe('todoSlice', () => {
 
   it('Проверка обработки deleteCompletedTodo', () => {
     const todos = [
-      { id: '1', content: 'Задача 1', completed: false },
-      { id: '2', content: 'Задача 2', completed: true }
+      { id: '1', content: 'Задача 1', status: StatusEnum.Pending },
+      { id: '2', content: 'Задача 2', status: StatusEnum.Done }
     ]
     const state = { ...initialState, todos }
     

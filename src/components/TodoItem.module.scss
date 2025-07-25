@@ -7,21 +7,25 @@
   margin: 8px auto;
   padding: 10px 15px;
   border-radius: 10px;
+}
+
+.pending {
   background-color: #2195f336;
+}
+
+.progress {
+  background-color: #3af32136;
+}
+
+.done {
+  background-color: #f3212136;
 }
 
 .content {
   display: flex;
   align-items: center;
   gap: 10px;
-  cursor: pointer;
   flex-grow: 1;
-}
-
-.checkbox {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
 }
 
 .text {

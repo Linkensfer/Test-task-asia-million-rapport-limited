@@ -5,8 +5,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import todoReducer from '../store/todoSlice'
 import { Footer } from './Footer'
 import { TodoList } from './TodoList'
-import { setFilter } from '../store/todoSlice'
-import { FilterType, ITodo } from '../types/types'
+import { FilterType, ITodo, StatusEnum } from '../types/types'
 import userEvent from '@testing-library/user-event'
 
 beforeAll(() => {
@@ -20,8 +19,8 @@ beforeAll(() => {
 
 describe('Footer', () => {
   const mockTodos: ITodo[] = [
-    { id: '1', content: 'Задача 1', completed: false },
-    { id: '2', content: 'Задача 2', completed: true }
+    { id: '1', content: 'Задача 1', status: StatusEnum.Pending },
+    { id: '2', content: 'Задача 2', status: StatusEnum.Done }
   ]
 
   const createTestStore = (todos: ITodo[] = mockTodos, filter: FilterType = 'all') => {
@@ -79,7 +78,7 @@ describe('Footer', () => {
   })
 
   it('Проверка: кнопка удаления выполненных задач неактивна, если выполненных задач нет', () => {
-    const store = createTestStore([{ id: '1', content: 'Задача', completed: false }])
+    const store = createTestStore([{ id: '1', content: 'Задача', status: StatusEnum.Pending }])
 
     render(
       <Provider store={store}>
@@ -93,8 +92,8 @@ describe('Footer', () => {
 
 describe('Интеграция Footer и TodoList', () => {
   const mockTodos: ITodo[] = [
-    { id: '1', content: 'Активная задача', completed: false },
-    { id: '2', content: 'Завершенная задача', completed: true }
+    { id: '1', content: 'Активная задача', status: StatusEnum.Pending },
+    { id: '2', content: 'Завершенная задача', status: StatusEnum.Done }
   ]
 
   const createTestStore = (todos: ITodo[] = mockTodos, filter: FilterType = 'all') => {
@@ -120,7 +119,7 @@ describe('Интеграция Footer и TodoList', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(2)
     
     // Фильтрация по активным задачам
-    await userEvent.click(screen.getByText('Active'))
+    await userEvent.click(screen.getByText('Pending'))
     expect(screen.getAllByRole('listitem')).toHaveLength(1)
     expect(screen.getByText('Активная задача')).toBeInTheDocument()
     

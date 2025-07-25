@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import todoReducer from '../store/todoSlice'
 import { RemoveTodo } from './RemoveTodo'
-import { ITodo } from '../types/types'
+import { ITodo, StatusEnum } from '../types/types'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { FilterType } from '../types/types'
@@ -22,7 +22,7 @@ describe('RemoveTodo', () => {
   const mockTodo: ITodo = {
     id: '1',
     content: 'Test task',
-    completed: false
+    status: StatusEnum.Pending
   }
 
   const createTestStore = (todos: ITodo[] = [mockTodo]) => {

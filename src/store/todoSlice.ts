@@ -1,9 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { ITodo, FilterType } from "../types/types"
+import { ITodo, FilterType, StatusEnum } from "../types/types"
 
 type TodosState = {
   todos: ITodo[]
   filter: FilterType
+}
+
+type UpdatePayloadType = {
+  id: string
+  status: StatusEnum
 }
 
 // Функция для загрузки состояния из localStorage
@@ -15,11 +20,7 @@ const loadState = (): TodosState | undefined => {
     }
     const parsedState = JSON.parse(serializedState) as TodosState
     // Проверка структуры
-    if (
-      parsedState && 
-      Array.isArray(parsedState.todos) && 
-      (parsedState.filter === 'all' || parsedState.filter === 'active' || parsedState.filter === 'completed')
-    ) {
+    if (parsedState && Array.isArray(parsedState.todos) && parsedState.filter.length) {
       return parsedState
     }
     return undefined
@@ -52,14 +53,16 @@ export const todoSlice = createSlice({
       state.todos.push({
         id: new Date().toISOString(),
         content: action.payload,
-        completed: false
+        status: StatusEnum.Pending
       })
       saveState(state)
     },
-    updateTodo(state, action: PayloadAction<string>) {
-      const toggledTodo = state.todos.find(todo => todo.id === action.payload)
+    updateTodo(state, action: PayloadAction<UpdatePayloadType>) {
+      const toggledTodo = state.todos.find(todo => todo.id === action.payload.id)
+
+
       if (toggledTodo) {
-        toggledTodo.completed = !toggledTodo.completed
+        toggledTodo.status = action.payload.status
         saveState(state)
       }
     },
@@ -68,7 +71,7 @@ export const todoSlice = createSlice({
       saveState(state)
     },
     deleteCompletedTodo(state) {
-      state.todos = state.todos.filter(todo => !todo.completed)
+      state.todos = state.todos.filter(todo => todo.status !== StatusEnum.Done)
       saveState(state)
     },
     setFilter(state, action: PayloadAction<FilterType>) {

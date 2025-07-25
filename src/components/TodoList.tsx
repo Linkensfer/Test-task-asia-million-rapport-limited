@@ -2,13 +2,24 @@ import { TodoItem } from "./TodoItem"
 import { useSelector } from 'react-redux'
 import { RootState } from "../store"
 import styles from './TodoList.module.scss'
+import { StatusEnum } from "../types/types"
 
 export function TodoList() {
   const todos = useSelector((state: RootState) => state.todos.todos)
   const filter = useSelector((state: RootState) => state.todos.filter)
 
   const filteredTodos = filter === 'all' ? todos : 
-    todos.filter(todo => filter === 'active' ? !todo.completed : todo.completed)
+    todos.filter(todo => {
+      if (filter === 'active') {
+        return todo.status === StatusEnum.InProgress
+      }
+      
+      if (filter === 'pending') {
+        return todo.status === StatusEnum.Pending
+      }
+      
+      return todo.status === StatusEnum.Done
+    })
   
   return (
     <div className={styles.list} role="list">
